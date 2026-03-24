@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>CAD to 3D Renderer</title>
+  <link rel="stylesheet" href="/src/styles.css" />
+</head>
+<body>
+  <div id="app">
+    <!-- Header -->
+    <header id="header">
+      <h1>CAD to 3D Renderer</h1>
+      <p>Upload a CAD floor plan or draw your own to generate an interactive 3D model</p>
+    </header>
+
+    <!-- Main Layout -->
+    <div id="main-layout">
+      <!-- Left Panel: Controls -->
+      <aside id="controls-panel">
+        <!-- Upload Section -->
+        <section class="panel-section">
+          <h3>Import Floor Plan</h3>
+          <div id="upload-area">
+            <input type="file" id="file-input" accept=".dxf,.svg,.png,.jpg,.jpeg" />
+            <label for="file-input" id="upload-label">
+              <span class="upload-icon">&#128194;</span>
+              <span>Drop file or click to upload</span>
+              <span class="upload-hint">Supports DXF, SVG, PNG, JPG</span>
+            </label>
+          </div>
+        </section>
+
+        <!-- Manual Editor Section -->
+        <section class="panel-section">
+          <h3>Manual Editor</h3>
+          <div class="button-group">
+            <button id="btn-draw-wall" class="tool-btn" title="Draw walls">&#9608; Draw Wall</button>
+            <button id="btn-add-door" class="tool-btn" title="Add door">&#128682; Door</button>
+            <button id="btn-add-window" class="tool-btn" title="Add window">&#9634; Window</button>
+            <button id="btn-select" class="tool-btn active" title="Select & move">&#9995; Select</button>
+            <button id="btn-delete" class="tool-btn" title="Delete selected">&#128465; Delete</button>
+          </div>
+          <div class="input-row">
+            <label>Wall Height (m):</label>
+            <input type="number" id="wall-height" value="2.8" min="1" max="10" step="0.1" />
+          </div>
+          <div class="input-row">
+            <label>Wall Thickness (m):</label>
+            <input type="number" id="wall-thickness" value="0.15" min="0.05" max="1" step="0.05" />
+          </div>
+          <div class="input-row">
+            <label>Scale (px per meter):</label>
+            <input type="number" id="editor-scale" value="50" min="10" max="200" step="5" />
+          </div>
+        </section>
+
+        <!-- 3D Settings -->
+        <section class="panel-section">
+          <h3>3D Settings</h3>
+          <div class="input-row">
+            <label>Wall Color:</label>
+            <input type="color" id="wall-color" value="#e8e0d4" />
+          </div>
+          <div class="input-row">
+            <label>Floor Color:</label>
+            <input type="color" id="floor-color" value="#c4a882" />
+          </div>
+          <div class="input-row">
+            <label>Show Dimensions:</label>
+            <input type="checkbox" id="show-dimensions" checked />
+          </div>
+          <div class="input-row">
+            <label>Show Floor:</label>
+            <input type="checkbox" id="show-floor" checked />
+          </div>
+          <div class="input-row">
+            <label>Show Ceiling:</label>
+            <input type="checkbox" id="show-ceiling" />
+          </div>
+        </section>
+
+        <!-- Actions -->
+        <section class="panel-section">
+          <button id="btn-generate-3d" class="primary-btn">Generate 3D Model</button>
+          <button id="btn-clear" class="secondary-btn">Clear All</button>
+          <button id="btn-load-sample" class="secondary-btn">Load Sample Plan</button>
+        </section>
+      </aside>
+
+      <!-- Center: 2D Editor / 3D View -->
+      <main id="viewport-container">
+        <div id="view-tabs">
+          <button id="tab-2d" class="tab-btn active">2D Editor</button>
+          <button id="tab-3d" class="tab-btn">3D View</button>
+        </div>
+        <canvas id="editor-canvas"></canvas>
+        <div id="renderer-container" style="display: none;"></div>
+        <div id="dimension-tooltip" style="display: none;"></div>
+        <div id="status-bar">
+          <span id="status-text">Ready. Draw walls or upload a floor plan.</span>
+          <span id="cursor-pos"></span>
+        </div>
+      </main>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>

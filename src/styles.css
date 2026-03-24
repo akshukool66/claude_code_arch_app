@@ -1,0 +1,309 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+  background: #1a1a2e;
+  color: #e0e0e0;
+  overflow: hidden;
+  height: 100vh;
+}
+
+#app {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+}
+
+#header {
+  background: #16213e;
+  padding: 12px 24px;
+  border-bottom: 1px solid #0f3460;
+  flex-shrink: 0;
+}
+
+#header h1 {
+  font-size: 1.3rem;
+  color: #e94560;
+  font-weight: 700;
+}
+
+#header p {
+  font-size: 0.8rem;
+  color: #888;
+  margin-top: 2px;
+}
+
+#main-layout {
+  display: flex;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Controls Panel */
+#controls-panel {
+  width: 280px;
+  background: #16213e;
+  border-right: 1px solid #0f3460;
+  overflow-y: auto;
+  flex-shrink: 0;
+  padding: 12px;
+}
+
+.panel-section {
+  margin-bottom: 16px;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #0f3460;
+}
+
+.panel-section:last-child {
+  border-bottom: none;
+}
+
+.panel-section h3 {
+  font-size: 0.85rem;
+  color: #e94560;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* Upload Area */
+#upload-area {
+  position: relative;
+}
+
+#file-input {
+  position: absolute;
+  opacity: 0;
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  z-index: 2;
+}
+
+#upload-label {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 20px;
+  border: 2px dashed #0f3460;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: border-color 0.3s, background 0.3s;
+  text-align: center;
+}
+
+#upload-label:hover {
+  border-color: #e94560;
+  background: rgba(233, 69, 96, 0.05);
+}
+
+.upload-icon {
+  font-size: 2rem;
+  margin-bottom: 6px;
+}
+
+.upload-hint {
+  font-size: 0.7rem;
+  color: #666;
+  margin-top: 4px;
+}
+
+/* Button Groups */
+.button-group {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.tool-btn {
+  flex: 1;
+  min-width: 70px;
+  padding: 6px 4px;
+  background: #1a1a2e;
+  border: 1px solid #0f3460;
+  color: #e0e0e0;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.72rem;
+  transition: all 0.2s;
+}
+
+.tool-btn:hover {
+  border-color: #e94560;
+}
+
+.tool-btn.active {
+  background: #e94560;
+  border-color: #e94560;
+  color: white;
+}
+
+/* Input Rows */
+.input-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.input-row label {
+  font-size: 0.78rem;
+  color: #aaa;
+}
+
+.input-row input[type="number"] {
+  width: 70px;
+  padding: 4px 6px;
+  background: #1a1a2e;
+  border: 1px solid #0f3460;
+  color: #e0e0e0;
+  border-radius: 4px;
+  font-size: 0.8rem;
+}
+
+.input-row input[type="color"] {
+  width: 40px;
+  height: 28px;
+  border: 1px solid #0f3460;
+  border-radius: 4px;
+  cursor: pointer;
+  background: none;
+}
+
+.input-row input[type="checkbox"] {
+  accent-color: #e94560;
+}
+
+/* Buttons */
+.primary-btn {
+  width: 100%;
+  padding: 10px;
+  background: #e94560;
+  border: none;
+  color: white;
+  border-radius: 6px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s;
+  margin-bottom: 8px;
+}
+
+.primary-btn:hover {
+  background: #d63851;
+}
+
+.secondary-btn {
+  width: 100%;
+  padding: 7px;
+  background: transparent;
+  border: 1px solid #0f3460;
+  color: #aaa;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  margin-bottom: 6px;
+}
+
+.secondary-btn:hover {
+  border-color: #e94560;
+  color: #e94560;
+}
+
+/* Viewport */
+#viewport-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  background: #0d1117;
+}
+
+#view-tabs {
+  display: flex;
+  background: #16213e;
+  border-bottom: 1px solid #0f3460;
+  flex-shrink: 0;
+}
+
+.tab-btn {
+  flex: 1;
+  padding: 8px;
+  background: transparent;
+  border: none;
+  color: #888;
+  font-size: 0.85rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+}
+
+.tab-btn.active {
+  color: #e94560;
+  border-bottom-color: #e94560;
+}
+
+.tab-btn:hover {
+  color: #e0e0e0;
+}
+
+#editor-canvas {
+  flex: 1;
+  display: block;
+  cursor: crosshair;
+}
+
+#renderer-container {
+  flex: 1;
+  position: relative;
+}
+
+#renderer-container canvas {
+  display: block;
+}
+
+/* Status Bar */
+#status-bar {
+  display: flex;
+  justify-content: space-between;
+  padding: 4px 12px;
+  background: #16213e;
+  border-top: 1px solid #0f3460;
+  font-size: 0.72rem;
+  color: #666;
+  flex-shrink: 0;
+}
+
+/* Dimension Tooltip */
+#dimension-tooltip {
+  position: absolute;
+  background: rgba(233, 69, 96, 0.9);
+  color: white;
+  padding: 4px 8px;
+  border-radius: 4px;
+  font-size: 0.75rem;
+  pointer-events: none;
+  white-space: nowrap;
+  z-index: 100;
+}
+
+/* Scrollbar */
+#controls-panel::-webkit-scrollbar {
+  width: 6px;
+}
+
+#controls-panel::-webkit-scrollbar-track {
+  background: #1a1a2e;
+}
+
+#controls-panel::-webkit-scrollbar-thumb {
+  background: #0f3460;
+  border-radius: 3px;
+}
