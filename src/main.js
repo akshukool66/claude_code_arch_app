@@ -2,6 +2,7 @@ import { FloorPlanData } from './floorPlanData.js';
 import { Editor2D } from './editor2d.js';
 import { Renderer3D } from './renderer3d.js';
 import { parseDXF } from './dxfImporter.js';
+import { parsePDF, importPDFLines } from './pdfImporter.js';
 
 // State
 const floorPlan = new FloorPlanData();
@@ -182,6 +183,39 @@ document.getElementById('file-input').addEventListener('change', (e) => {
       }
     };
     reader.readAsText(file);
+  } else if (ext === 'pdf') {
+    statusText.textContent = 'Loading PDF...';
+    const reader = new FileReader();
+    reader.onload = async (ev) => {
+      try {
+        const result = await parsePDF(ev.target.result, 1);
+        // Store PDF data for page navigation
+        window._pdfData = { buffer: ev.target.result, pageCount: result.pageCount, currentPage: 1 };
+
+        // Try to import vector lines if found
+        let vectorMsg = '';
+        if (result.lines.length > 0) {
+          const importResult = importPDFLines(result.lines, floorPlan, result.width, result.height);
+          editor.render();
+          vectorMsg = ` Extracted ${importResult.wallCount} walls from ${importResult.totalLines} vector lines.`;
+        }
+
+        // Also load rendered image as background for tracing
+        loadBackgroundImage(result.dataUrl);
+
+        let pageMsg = result.pageCount > 1 ? ` (Page 1 of ${result.pageCount})` : '';
+        statusText.textContent = `PDF loaded${pageMsg}.${vectorMsg} Use Draw Wall tool to trace additional walls.`;
+
+        // Show page navigation if multi-page
+        if (result.pageCount > 1) {
+          showPDFPageNav(result.pageCount, 1);
+        }
+      } catch (err) {
+        statusText.textContent = 'Error loading PDF: ' + err.message;
+        console.error('PDF import error:', err);
+      }
+    };
+    reader.readAsArrayBuffer(file);
   } else if (['png', 'jpg', 'jpeg'].includes(ext)) {
     // For image files, display as background in editor for tracing
     const reader = new FileReader();
@@ -287,6 +321,60 @@ function parseSimplePath(d, scale) {
     }
   }
   return coords;
+}
+
+/** Show PDF page navigation controls */
+function showPDFPageNav(pageCount, currentPage) {
+  // Remove existing nav if any
+  const existing = document.getElementById('pdf-page-nav');
+  if (existing) existing.remove();
+
+  const nav = document.createElement('div');
+  nav.id = 'pdf-page-nav';
+  nav.style.cssText = 'display:flex;align-items:center;gap:8px;padding:8px 12px;background:#161b22;border:1px solid #30363d;border-radius:6px;margin-top:8px;';
+
+  nav.innerHTML = `
+    <button id="pdf-prev" style="padding:4px 8px;background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:4px;cursor:pointer;">&larr; Prev</button>
+    <span style="color:#c9d1d9;font-size:13px;">Page <span id="pdf-current">${currentPage}</span> of ${pageCount}</span>
+    <button id="pdf-next" style="padding:4px 8px;background:#21262d;color:#c9d1d9;border:1px solid #30363d;border-radius:4px;cursor:pointer;">Next &rarr;</button>
+  `;
+
+  // Insert after upload area
+  const uploadSection = document.getElementById('upload-area');
+  uploadSection.parentElement.appendChild(nav);
+
+  document.getElementById('pdf-prev').addEventListener('click', () => navigatePDFPage(-1));
+  document.getElementById('pdf-next').addEventListener('click', () => navigatePDFPage(1));
+}
+
+async function navigatePDFPage(delta) {
+  const pdfData = window._pdfData;
+  if (!pdfData) return;
+
+  const newPage = pdfData.currentPage + delta;
+  if (newPage < 1 || newPage > pdfData.pageCount) return;
+
+  statusText.textContent = `Loading page ${newPage}...`;
+  try {
+    const result = await parsePDF(pdfData.buffer, newPage);
+    pdfData.currentPage = newPage;
+    document.getElementById('pdf-current').textContent = newPage;
+
+    // Try vector extraction
+    if (result.lines.length > 0) {
+      const importResult = importPDFLines(result.lines, floorPlan, result.width, result.height);
+      editor.render();
+      statusText.textContent = `Page ${newPage}: Extracted ${importResult.wallCount} walls. Trace additional walls as needed.`;
+    } else {
+      floorPlan.clear();
+      editor.render();
+      statusText.textContent = `Page ${newPage} loaded. Use Draw Wall tool to trace walls.`;
+    }
+
+    loadBackgroundImage(result.dataUrl);
+  } catch (err) {
+    statusText.textContent = 'Error loading page: ' + err.message;
+  }
 }
 
 /** Load image as background for tracing */
